@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import {
   Menu,
@@ -23,7 +24,18 @@ import {
   MessageCircle,
   Send,
   Play,
+  Award,
+  TrendingUp,
+  FileText,
+  HeadphonesIcon,
 } from 'lucide-react';
+
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import RefundPolicy from './pages/RefundPolicy';
+import ContactUs from './pages/ContactUs';
+import WhatsAppButton from './components/WhatsAppButton';
+import PopupModal from './components/PopupModal';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -31,7 +43,13 @@ const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-function App() {
+// Helper function for WhatsApp
+const openWhatsApp = () => {
+  const message = encodeURIComponent('Hi DigiExpert, I want to discuss my project.');
+  window.open(`https://wa.me/919891113214?text=${message}`, '_blank');
+};
+
+function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -53,171 +71,175 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setMobileMenuOpen(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) {
-      console.error('Supabase not configured');
-      return;
-    }
+    if (!supabase) return;
+
     setFormSubmitting(true);
     try {
-      const { error } = await supabase.from('contacts').insert([formData]);
-      if (error) throw error;
-      setFormSubmitted(true);
-      setFormData({ name: '', email: '', company: '', website_type: '', message: '' });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    } finally {
-      setFormSubmitting(false);
+      const { error } = await supabase
+        .from('contacts')
+        .insert([formData]);
+
+      if (!error) {
+        setFormSubmitted(true);
+        setFormData({ name: '', email: '', company: '', website_type: '', message: '' });
+      }
+    } catch (err) {
+      console.error('Error submitting form:', err);
     }
+    setFormSubmitting(false);
   };
 
   const services = [
     {
       icon: Palette,
-      title: 'Custom Website Design',
-      description: 'Unique, stunning designs tailored to your brand identity and business goals.',
-    },
-    {
-      icon: Smartphone,
-      title: 'Responsive Layouts',
-      description: 'Perfect display on all devices - mobile, tablet, and desktop.',
-    },
-    {
-      icon: Rocket,
-      title: 'Landing Pages',
-      description: 'High-converting landing pages optimized for maximum results.',
-    },
-    {
-      icon: Search,
-      title: 'SEO Optimization',
-      description: 'Rank higher on search engines and attract more organic traffic.',
-    },
-    {
-      icon: Zap,
-      title: 'Fast Loading Speed',
-      description: 'Optimized performance ensuring lightning-fast page loads.',
-    },
-    {
-      icon: Sparkles,
       title: 'Professional Content',
       description: 'Well-written content that connects with visitors and builds trust.',
     },
-  ];
-
-  const features = [
-    {
-      icon: Globe,
-      title: 'Portfolio Websites',
-      description: 'Showcase your work and build your personal brand with elegance.',
-    },
-    {
-      icon: Users,
-      title: 'Business Websites',
-      description: 'Professional sites that establish credibility and drive growth.',
-    },
-    {
-      icon: ShoppingCart,
-      title: 'eCommerce Stores',
-      description: 'Full-featured online stores with seamless checkout experiences.',
-    },
     {
       icon: Code2,
-      title: 'Service-Based Sites',
-      description: 'Convert visitors into clients with strategic service presentations.',
-    },
-  ];
-
-  const steps = [
-    {
-      number: '01',
-      title: 'Discovery & Planning',
-      description: 'We analyze your needs, target audience, and business goals to create a strategic roadmap.',
-    },
-    {
-      number: '02',
       title: 'Expert Design Process',
       description: 'Our talented design team creates stunning visuals tailored to your brand while ensuring optimal user experience.',
     },
     {
-      number: '03',
-      title: 'Development & Testing',
-      description: 'We build your site with clean code, optimize for speed, and test across all devices.',
+      icon: Smartphone,
+      title: 'Mobile-First Design',
+      description: 'Every website is built to work flawlessly on all devices, from smartphones to desktops.',
     },
     {
-      number: '04',
-      title: 'Launch & Support',
-      description: 'Your site goes live with ongoing support, updates, and performance monitoring.',
+      icon: Search,
+      title: 'SEO Optimization',
+      description: 'Built-in search engine optimization to help your website rank higher on Google.',
+    },
+    {
+      icon: Zap,
+      title: 'Fast Loading Speed',
+      description: 'Optimized for lightning-fast performance to keep visitors engaged.',
+    },
+    {
+      icon: Shield,
+      title: 'Secure & Reliable',
+      description: 'Enterprise-grade security to protect your website and customer data.',
     },
   ];
 
-  const testimonials = [
+  const stats = [
+    { icon: Users, value: '200+', label: 'Happy Clients' },
+    { icon: Globe, value: '350+', label: 'Projects Delivered' },
+    { icon: Star, value: '4.9', label: 'Average Rating' },
+    { icon: Clock, value: '7-10', label: 'Days Delivery' },
+  ];
+
+  const features = [
     {
-      quote: "They delivered a stunning website in just 2 weeks. Our conversions increased by 340%. Absolutely incredible work!",
-      author: 'Sarah Mitchell',
-      role: 'CEO, TechStart Inc.',
-      rating: 5,
+      icon: Palette,
+      title: 'Custom Design',
+      description: 'Unique, brand-aligned designs that stand out from the competition.',
     },
     {
-      quote: "Professional, fast, and the expertly crafted content was perfectly tailored to our brand. Highly recommend!",
-      author: 'James Rodriguez',
-      role: 'Founder, Artisan Bakery',
-      rating: 5,
+      icon: Code2,
+      title: 'Clean Code',
+      description: 'Well-structured, maintainable code that performs exceptionally.',
     },
     {
-      quote: "Our new eCommerce store exceeded all expectations. Sales are up 200% and customers love the experience.",
-      author: 'Emily Chen',
-      role: 'Owner, Luxe Fashion',
-      rating: 5,
+      icon: Smartphone,
+      title: 'Responsive Layout',
+      description: 'Perfect display across all screen sizes and devices.',
+    },
+    {
+      icon: Zap,
+      title: 'Fast Performance',
+      description: 'Optimized for speed with lazy loading and efficient caching.',
+    },
+    {
+      icon: Shield,
+      title: 'SSL Security',
+      description: 'Free SSL certificate for secure data transmission.',
+    },
+    {
+      icon: HeadphonesIcon,
+      title: '24/7 Support',
+      description: 'Dedicated support team available to help you anytime.',
     },
   ];
 
   const pricingPlans = [
     {
       name: 'Starter',
-      price: '4,999',
-      description: 'Perfect for small businesses and personal brands',
+      price: 'Rs 9,999',
+      description: 'Perfect for small businesses and personal projects',
       features: [
         '5-page responsive website',
-        'Custom design',
-        'Mobile optimization',
+        'Mobile-friendly design',
         'Basic SEO setup',
         'Contact form',
-        '2 revision rounds',
+        'Professional content (5 pages)',
+        '1 month support',
       ],
       popular: false,
     },
     {
-      name: 'Professional',
-      price: '6,999',
+      name: 'Business',
+      price: 'Rs 24,999',
       description: 'Ideal for growing businesses and startups',
       features: [
         '10-page responsive website',
-        'Custom design with animations',
+        'Custom design',
         'Advanced SEO optimization',
         'Blog integration',
         'Professional content (10 pages)',
-        'Analytics dashboard',
-        '5 revision rounds',
-        'Priority support',
+        'Social media integration',
+        '3 months support',
       ],
       popular: true,
     },
     {
       name: 'Enterprise',
-      price: '9,999',
-      description: 'Full-featured solution for established businesses',
+      price: 'Rs 49,999',
+      description: 'Complete solution for established businesses',
       features: [
         'Unlimited pages',
-        'eCommerce functionality',
-        'Custom integrations',
+        'E-commerce functionality',
+        'Custom features',
         'Full content creation suite',
-        'Performance optimization',
-        'Security hardening',
-        'Unlimited revisions',
-        '24/7 dedicated support',
+        'Priority support',
+        '6 months maintenance',
+        'Custom integrations',
       ],
       popular: false,
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: 'Rahul Sharma',
+      role: 'Restaurant Owner, Mumbai',
+      content: 'DigiExpert delivered exactly what we needed for our restaurant website. The design is modern, and we started getting online orders within the first week!',
+      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150',
+      rating: 5,
+    },
+    {
+      name: 'Priya Patel',
+      role: 'Fashion Boutique, Delhi',
+      content: 'Professional, fast, and the expertly crafted content was perfectly tailored to our brand. Highly recommend!',
+      avatar: 'https://images.pexels.com/photos/3764119/pexels-photo-3764119.jpeg?auto=compress&cs=tinysrgb&w=150',
+      rating: 5,
+    },
+    {
+      name: 'Amit Kumar',
+      role: 'Tech Startup Founder, Bangalore',
+      content: 'The team understood our startup needs perfectly. They delivered a website that perfectly represents our innovative approach.',
+      avatar: 'https://images.pexels.com/photos/2380794/pexels-photo-2380794.jpeg?auto=compress&cs=tinysrgb&w=150',
+      rating: 5,
     },
   ];
 
@@ -227,34 +249,62 @@ function App() {
       answer: 'Most projects are completed within 7-10 days. Starter sites can be ready in as little as 5 days, while larger projects may take 2-3 weeks depending on complexity.',
     },
     {
+      question: 'What is included in your pricing?',
+      answer: 'Our pricing includes design, development, responsive layout, basic SEO, content creation, and support. Domain and hosting are separate.',
+    },
+    {
+      question: 'Do you provide ongoing support?',
+      answer: 'Yes! All packages include support periods. Extended maintenance plans are available for ongoing updates and security.',
+    },
+    {
       question: 'What makes your web design approach different?',
       answer: 'We combine expert design with efficient processes to deliver exceptional websites quickly. Our team focuses on user experience, conversion optimization, and brand consistency to ensure your website drives real business results.',
     },
     {
-      question: 'Do you provide ongoing support after launch?',
-      answer: 'Yes! All plans include support. Starter includes 30 days, Professional includes 90 days, and Enterprise includes ongoing support. We also offer maintenance packages for continued updates.',
+      question: 'Can I update the website myself?',
+      answer: 'Absolutely! We build websites on user-friendly platforms and provide training so you can easily update content.',
+    },
+  ];
+
+  const workflowSteps = [
+    {
+      icon: MessageCircle,
+      title: 'Requirement Discussion',
+      description: 'We discuss your project needs, goals, and vision in detail.',
     },
     {
-      question: 'Can I update the website myself after it\'s built?',
-      answer: 'Absolutely. We build on user-friendly platforms and provide training so you can make updates. We also offer managed services if you prefer we handle updates for you.',
+      icon: Palette,
+      title: 'Design Preview',
+      description: 'See mockups and designs before development begins.',
     },
     {
-      question: 'What\'s included in SEO optimization?',
-      answer: 'We implement technical SEO (site speed, mobile-friendliness, structure), on-page SEO (meta tags, headings, content optimization), and set up analytics so you can track performance.',
+      icon: Code2,
+      title: 'Development',
+      description: 'Expert coding to bring your design to life.',
+    },
+    {
+      icon: FileText,
+      title: 'Testing & Revisions',
+      description: 'Thorough testing and unlimited revisions until you\'re satisfied.',
+    },
+    {
+      icon: Rocket,
+      title: 'Final Launch',
+      description: 'Your website goes live with full support.',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+    <div className="min-h-screen">
+      {/* Header */}
+      <header
+        className={`fixed w-full z-50 transition-all duration-300 ${
+          scrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 lg:h-20">
-            <div className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <div className="relative w-10 h-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg transform rotate-3 opacity-80"></div>
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-600 rounded-lg flex items-center justify-center">
@@ -262,32 +312,38 @@ function App() {
                 </div>
               </div>
               <span className="text-xl font-bold text-secondary-900">DigiExpert</span>
-            </div>
+            </Link>
 
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#services" className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
+              <button onClick={() => scrollToSection('services')} className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
                 Services
-              </a>
-              <a href="#features" className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
+              </button>
+              <button onClick={() => scrollToSection('features')} className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
                 Features
-              </a>
-              <a href="#pricing" className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
+              </button>
+              <button onClick={() => scrollToSection('pricing')} className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
                 Pricing
-              </a>
-              <a href="#testimonials" className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
+              </button>
+              <button onClick={() => scrollToSection('testimonials')} className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
                 Testimonials
-              </a>
-              <a
-                href="#contact"
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-lg shadow-primary-600/30 hover:shadow-primary-600/40 hover:-translate-y-0.5"
+              </button>
+              <button onClick={() => scrollToSection('contact')} className="text-secondary-600 hover:text-primary-600 transition-colors font-medium">
+                Contact
+              </button>
+            </div>
+
+            <div className="hidden md:flex items-center space-x-4">
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all"
               >
-                Get Started
-              </a>
+                Get Free Quote
+              </button>
             </div>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-secondary-600"
+              className="md:hidden p-2"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -296,56 +352,38 @@ function App() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-secondary-100 animate-slide-down">
+          <div className="md:hidden bg-white border-t">
             <div className="px-4 py-4 space-y-3">
-              <a
-                href="#services"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-secondary-600 hover:text-primary-600 font-medium"
-              >
+              <button onClick={() => scrollToSection('services')} className="block w-full text-left py-2 text-secondary-600 hover:text-primary-600">
                 Services
-              </a>
-              <a
-                href="#features"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-secondary-600 hover:text-primary-600 font-medium"
-              >
+              </button>
+              <button onClick={() => scrollToSection('features')} className="block w-full text-left py-2 text-secondary-600 hover:text-primary-600">
                 Features
-              </a>
-              <a
-                href="#pricing"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-secondary-600 hover:text-primary-600 font-medium"
-              >
+              </button>
+              <button onClick={() => scrollToSection('pricing')} className="block w-full text-left py-2 text-secondary-600 hover:text-primary-600">
                 Pricing
-              </a>
-              <a
-                href="#testimonials"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-secondary-600 hover:text-primary-600 font-medium"
-              >
+              </button>
+              <button onClick={() => scrollToSection('testimonials')} className="block w-full text-left py-2 text-secondary-600 hover:text-primary-600">
                 Testimonials
-              </a>
-              <a
-                href="#contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block bg-primary-600 text-white px-6 py-3 rounded-full font-medium text-center"
+              </button>
+              <button onClick={() => scrollToSection('contact')} className="block w-full text-left py-2 text-secondary-600 hover:text-primary-600">
+                Contact
+              </button>
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="w-full bg-primary-600 text-white py-3 rounded-full font-semibold mt-4"
               >
-                Get Started
-              </a>
+                Get Free Quote
+              </button>
             </div>
           </div>
         )}
-      </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 lg:pt-32 pb-16 lg:pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent-200/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <section className="pt-24 lg:pt-32 pb-16 lg:pb-24 bg-gradient-to-br from-secondary-50 via-white to-primary-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center space-x-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
@@ -357,101 +395,91 @@ function App() {
                 </span>
               </h1>
               <p className="text-lg lg:text-xl text-secondary-600 mb-8 leading-relaxed">
-                We create modern, conversion-focused websites for businesses and startups.
-                Fast delivery, beautiful designs, and powerful digital experiences that turn visitors into customers.
+                Affordable Website & Digital Marketing Solutions for Indian Businesses. Fast delivery, beautiful designs, and powerful digital experiences that turn visitors into customers.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a
-                  href="#contact"
+                <button
+                  onClick={openWhatsApp}
                   className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-full font-semibold transition-all shadow-xl shadow-primary-600/30 hover:shadow-primary-600/40 hover:-translate-y-1 flex items-center justify-center space-x-2"
                 >
                   <span>Start Your Project</span>
                   <ArrowRight className="w-5 h-5" />
-                </a>
-                <a
-                  href="#how-it-works"
+                </button>
+                <button
+                  onClick={() => scrollToSection('workflow')}
                   className="border-2 border-secondary-300 hover:border-primary-500 text-secondary-700 hover:text-primary-600 px-8 py-4 rounded-full font-semibold transition-all flex items-center justify-center space-x-2"
                 >
                   <Play className="w-5 h-5" />
                   <span>See How It Works</span>
-                </a>
+                </button>
               </div>
-
-              <div className="mt-10 flex flex-wrap gap-6 justify-center lg:justify-start">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-accent-600" />
-                  <span className="text-secondary-600 font-medium">Fast Delivery</span>
+              <div className="flex items-center justify-center lg:justify-start space-x-8 mt-8">
+                <div>
+                  <p className="text-sm text-secondary-500">Avg. delivery time</p>
+                  <p className="text-lg font-bold text-secondary-900">7-10 Days</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-accent-600" />
-                  <span className="text-secondary-600 font-medium">100% Responsive</span>
+                <div className="w-px h-12 bg-secondary-200"></div>
+                <div>
+                  <p className="text-sm text-secondary-500">Starting price</p>
+                  <p className="text-lg font-bold text-secondary-900">Rs 9,999</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-accent-600" />
-                  <span className="text-secondary-600 font-medium">SEO Optimized</span>
+                <div className="w-px h-12 bg-secondary-200"></div>
+                <div>
+                  <p className="text-sm text-secondary-500">Support</p>
+                  <p className="text-lg font-bold text-secondary-900">24/7</p>
                 </div>
               </div>
             </div>
-
             <div className="relative">
-              <div className="relative bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div className="p-4 border-b border-white/10 flex items-center space-x-2">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <div className="bg-secondary-900 flex items-center space-x-2 px-4 py-3">
                   <div className="w-3 h-3 rounded-full bg-red-400" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
                 <img
                   src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Creative team collaboration workspace"
+                  alt="Indian business team collaborating"
                   className="w-full h-64 lg:h-80 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent" />
-              </div>
-
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-4 flex items-center space-x-3 animate-slide-up">
-                <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
-                  <Rocket className="w-6 h-6 text-accent-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-secondary-500">Avg. delivery time</p>
-                  <p className="text-lg font-bold text-secondary-900">7-10 Days</p>
-                </div>
-              </div>
-
-              <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-xl p-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm font-semibold text-secondary-900 mt-1">5.0 Rating</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 lg:py-28 bg-secondary-50">
+      {/* Stats Section */}
+      <section className="py-12 bg-primary-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">
-              Everything You Need for Online Success
-            </h2>
-            <p className="text-lg text-secondary-600">
-              From stunning designs to powerful functionality, we deliver complete web solutions
-              tailored to your business needs.
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <stat.icon className="w-8 h-8 text-primary-200 mx-auto mb-2" />
+                <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
+                <p className="text-primary-200">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-16 lg:py-24 bg-white" id="services">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">Why Choose DigiExpert?</h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              We deliver professional websites that help Indian businesses grow online
             </p>
           </div>
-
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-secondary-100"
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all border border-secondary-100 group hover:border-primary-200"
               >
-                <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-6">
-                  <service.icon className="w-7 h-7 text-primary-600" />
+                <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-600 transition-colors">
+                  <service.icon className="w-7 h-7 text-primary-600 group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold text-secondary-900 mb-3">{service.title}</h3>
                 <p className="text-secondary-600 leading-relaxed">{service.description}</p>
@@ -461,72 +489,30 @@ function App() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 lg:py-28">
+      {/* Workflow Section */}
+      <section className="py-16 lg:py-24 bg-secondary-50" id="workflow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-6">
-                Perfect Solutions for Every Website Type
-              </h2>
-              <p className="text-lg text-secondary-600 mb-8">
-                Whether you need a portfolio, business site, or online store, we have the expertise
-                to bring your vision to life with precision and excellence.
-              </p>
-
-              <div className="space-y-6">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="w-6 h-6 text-accent-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-secondary-900">{feature.title}</h3>
-                      <p className="text-secondary-600">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative">
-              <img
-                src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Creative web design workspace with laptop"
-                className="rounded-2xl shadow-2xl"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-primary-600 text-white rounded-xl p-6 shadow-xl">
-                <p className="text-3xl font-bold">500+</p>
-                <p className="text-primary-100">Websites Delivered</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 lg:py-28 bg-gradient-to-br from-primary-900 via-primary-800 to-secondary-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              How We Build Your Success
-            </h2>
-            <p className="text-lg text-primary-100">
-              Our streamlined process combines expert design with efficient workflows to deliver
-              exceptional results, fast.
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">Our Process</h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              Simple, transparent workflow to bring your website to life
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, index) => (
+          <div className="grid md:grid-cols-5 gap-6 lg:gap-8">
+            {workflowSteps.map((step, index) => (
               <div key={index} className="relative">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:bg-white/15 transition-all">
-                  <div className="text-5xl font-bold text-primary-300 mb-4">{step.number}</div>
-                  <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-primary-100 leading-relaxed">{step.description}</p>
+                <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all text-center">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    {index + 1}
+                  </div>
+                  <h3 className="font-bold text-secondary-900 mb-2">{step.title}</h3>
+                  <p className="text-sm text-secondary-600">{step.description}</p>
                 </div>
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                {index < workflowSteps.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                     <ArrowRight className="w-6 h-6 text-primary-300" />
                   </div>
                 )}
@@ -536,40 +522,26 @@ function App() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 lg:py-28 bg-secondary-50">
+      {/* Features Section */}
+      <section className="py-16 lg:py-24 bg-white" id="features">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">
-              Trusted by Businesses Everywhere
+              Everything You Need for a Perfect Website
             </h2>
-            <p className="text-lg text-secondary-600">
-              See what our clients say about their experience working with us.
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              All essential features included in every website we build
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-secondary-100"
-              >
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
-                <p className="text-secondary-700 leading-relaxed mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full flex items-center justify-center text-white font-bold">
-                    {testimonial.author.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-secondary-900">{testimonial.author}</p>
-                    <p className="text-sm text-secondary-500">{testimonial.role}</p>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-bold text-secondary-900 mb-2">{feature.title}</h3>
+                  <p className="text-secondary-600">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -578,83 +550,130 @@ function App() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 lg:py-28">
+      <section className="py-16 lg:py-24 bg-secondary-50" id="pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">
-              Simple, Transparent Pricing
+              Affordable Pricing for Indian Businesses
             </h2>
-            <p className="text-lg text-secondary-600">
-              Choose the perfect plan for your needs. No hidden fees, no surprises.
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              Transparent pricing with no hidden costs. Choose the plan that suits your needs.
             </p>
           </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`relative rounded-2xl ${
-                  plan.popular
-                    ? 'bg-primary-600 text-white shadow-2xl shadow-primary-600/30 scale-105'
-                    : 'bg-white border border-secondary-200'
-                } p-8`}
+                className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
+                  plan.popular ? 'ring-2 ring-primary-600 scale-105' : ''
+                }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                  <div className="bg-primary-600 text-white text-center py-2 text-sm font-semibold">
                     Most Popular
                   </div>
                 )}
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline mb-4">
-                  <span className="text-2xl font-bold mr-1">₹</span>
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className={plan.popular ? 'text-primary-200' : 'text-secondary-500'}> / project</span>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-secondary-900 mb-2">{plan.name}</h3>
+                  <p className="text-secondary-600 mb-4">{plan.description}</p>
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold text-secondary-900">{plan.price}</span>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    {plan.features.map((feature, fIndex) => (
+                      <li key={fIndex} className="flex items-center space-x-3">
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        <span className="text-secondary-600">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={openWhatsApp}
+                    className={`w-full py-4 rounded-lg font-semibold transition-all ${
+                      plan.popular
+                        ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                        : 'bg-secondary-100 hover:bg-secondary-200 text-secondary-900'
+                    }`}
+                  >
+                    Get Started
+                  </button>
                 </div>
-                <p className={`mb-6 ${plan.popular ? 'text-primary-100' : 'text-secondary-600'}`}>
-                  {plan.description}
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start space-x-2">
-                      <CheckCircle
-                        className={`w-5 h-5 flex-shrink-0 ${
-                          plan.popular ? 'text-accent-300' : 'text-accent-600'
-                        }`}
-                      />
-                      <span className={plan.popular ? 'text-primary-50' : 'text-secondary-700'}>
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="#contact"
-                  className={`block text-center py-3 px-6 rounded-full font-semibold transition-all ${
-                    plan.popular
-                      ? 'bg-white text-primary-600 hover:bg-primary-50'
-                      : 'bg-primary-600 text-white hover:bg-primary-700'
-                  }`}
-                >
-                  Get Started
-                </a>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-16 lg:py-24 bg-white" id="testimonials">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">
+              Trusted by Indian Businesses
+            </h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              See what our clients say about us
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-lg p-8 border border-secondary-100"
+              >
+                <div className="flex items-center space-x-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-secondary-600 mb-6 italic">"{testimonial.content}"</p>
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="font-bold text-secondary-900">{testimonial.name}</p>
+                    <p className="text-sm text-secondary-600">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Badges */}
+      <section className="py-16 bg-secondary-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-secondary-900 mb-4">Trusted by 200+ Indian Businesses</h2>
+            <div className="flex flex-wrap justify-center items-center gap-8">
+              {[
+                { icon: Shield, label: 'Secure & Reliable' },
+                { icon: Award, label: 'Quality Assured' },
+                { icon: TrendingUp, label: 'Growth Focused' },
+                { icon: Users, label: '200+ Happy Clients' },
+              ].map((badge, index) => (
+                <div key={index} className="flex items-center space-x-2 text-secondary-600">
+                  <badge.icon className="w-6 h-6 text-primary-600" />
+                  <span className="font-medium">{badge.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
-      <section className="py-20 lg:py-28 bg-secondary-50">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-secondary-600">
-              Got questions? We've got answers.
-            </p>
           </div>
-
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div
@@ -663,18 +682,18 @@ function App() {
               >
                 <button
                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between"
                 >
                   <span className="font-semibold text-secondary-900">{faq.question}</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-secondary-500 transition-transform ${
+                    className={`w-5 h-5 text-secondary-600 transition-transform ${
                       activeFaq === index ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
                 {activeFaq === index && (
-                  <div className="px-6 pb-5 text-secondary-600 leading-relaxed animate-slide-down">
-                    {faq.answer}
+                  <div className="px-6 pb-5">
+                    <p className="text-secondary-600">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -684,182 +703,116 @@ function App() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 lg:py-28 bg-gradient-to-r from-primary-600 to-primary-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-16 lg:py-24 bg-gradient-to-r from-primary-600 to-primary-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Online Presence?
+            Ready to Grow Your Business Online?
           </h2>
           <p className="text-xl text-primary-100 mb-8">
             Join hundreds of businesses who've accelerated their growth with our professional web solutions.
           </p>
-          <a
-            href="#contact"
+          <button
+            onClick={openWhatsApp}
             className="inline-flex items-center space-x-2 bg-white text-primary-600 px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
           >
             <span>Start Your Project Today</span>
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </button>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 lg:py-28">
+      <section className="py-16 lg:py-24 bg-secondary-50" id="contact">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-secondary-900 mb-6">
-                Let's Build Something Amazing Together
-              </h2>
+              <h2 className="text-3xl font-bold text-secondary-900 mb-6">Get in Touch</h2>
               <p className="text-lg text-secondary-600 mb-8">
-                Fill out the form and we'll get back to you within 24 hours with a personalized
-                proposal for your project.
+                Ready to start your project? Fill out the form or contact us directly.
               </p>
 
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-secondary-900">Fast Response</h3>
-                    <p className="text-secondary-600">We respond to all inquiries within 24 hours</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-secondary-900">Free Consultation</h3>
-                    <p className="text-secondary-600">Discuss your project with no obligation</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-secondary-900">Secure & Private</h3>
-                    <p className="text-secondary-600">Your information is always protected</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-secondary-50 rounded-2xl p-8 lg:p-10">
               {formSubmitted ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-8 h-8 text-accent-600" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-secondary-900 mb-3">
-                    Thank You!
-                  </h3>
-                  <p className="text-secondary-600">
-                    We've received your message and will be in touch within 24 hours.
-                  </p>
+                <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                  <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-secondary-900 mb-2">Thank You!</h3>
+                  <p className="text-secondary-600">We'll get back to you within 24 hours.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-secondary-700 mb-2">
-                        Your Name *
-                      </label>
                       <input
                         type="text"
-                        id="name"
+                        placeholder="Your Name *"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-secondary-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors"
-                        placeholder="John Smith"
+                        className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
-                        Email Address *
-                      </label>
                       <input
                         type="email"
-                        id="email"
+                        placeholder="Email Address *"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-secondary-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors"
-                        placeholder="john@example.com"
+                        className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
                       />
                     </div>
                   </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="company" className="block text-sm font-medium text-secondary-700 mb-2">
-                        Company Name
-                      </label>
                       <input
                         type="text"
-                        id="company"
+                        placeholder="Company Name"
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-secondary-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors"
-                        placeholder="Your Company"
+                        className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
                       />
                     </div>
                     <div>
-                      <label htmlFor="website_type" className="block text-sm font-medium text-secondary-700 mb-2">
-                        Website Type
-                      </label>
                       <select
-                        id="website_type"
                         value={formData.website_type}
                         onChange={(e) => setFormData({ ...formData, website_type: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-secondary-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors"
+                        className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
                       >
-                        <option value="">Select type...</option>
-                        <option value="portfolio">Portfolio</option>
-                        <option value="business">Business Website</option>
-                        <option value="ecommerce">eCommerce Store</option>
-                        <option value="landing">Landing Page</option>
-                        <option value="other">Other</option>
+                        <option value="">Select Website Type</option>
+                        <option value="Business Website">Business Website</option>
+                        <option value="E-commerce">E-commerce</option>
+                        <option value="Portfolio">Portfolio</option>
+                        <option value="Blog">Blog</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
                   </div>
-
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Project Details *
-                    </label>
                     <textarea
-                      id="message"
-                      required
-                      rows={5}
+                      rows={4}
+                      placeholder="Tell us about your project"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border border-secondary-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-colors resize-none"
-                      placeholder="Tell us about your project, goals, and timeline..."
+                      className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all resize-none"
                     />
                   </div>
-
                   <button
                     type="submit"
                     disabled={formSubmitting}
-                    className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-4 rounded-lg font-semibold transition-all shadow-lg shadow-primary-600/30 flex items-center justify-center space-x-2"
+                    className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
                   >
-                    {formSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Send Message</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </>
-                    )}
+                    <Send className="w-5 h-5" />
+                    <span>{formSubmitting ? 'Sending...' : 'Send Message'}</span>
                   </button>
                 </form>
               )}
+            </div>
+
+            <div>
+              <img
+                src="https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="Indian digital marketing team workspace"
+                className="rounded-2xl shadow-2xl"
+              />
             </div>
           </div>
         </div>
@@ -887,37 +840,66 @@ function App() {
 
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-secondary-400">
-                <li><a href="#services" className="hover:text-white transition-colors">Services</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
+              <ul className="space-y-2">
+                <li><Link to="/" className="text-secondary-400 hover:text-white transition-colors">Home</Link></li>
+                <li><Link to="/contact" className="text-secondary-400 hover:text-white transition-colors">Contact Us</Link></li>
+                <li><a href="#pricing" className="text-secondary-400 hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#services" className="text-secondary-400 hover:text-white transition-colors">Services</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Website Types</h4>
-              <ul className="space-y-2 text-secondary-400">
-                <li><a href="#features" className="hover:text-white transition-colors">Portfolio</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Business</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">eCommerce</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Landing Pages</a></li>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2">
+                <li><Link to="/privacy" className="text-secondary-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-secondary-400 hover:text-white transition-colors">Terms & Conditions</Link></li>
+                <li><Link to="/refund" className="text-secondary-400 hover:text-white transition-colors">Refund Policy</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-secondary-800 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-secondary-400 text-sm">
-              © 2024 DigiExpert. All rights reserved.
+              © 2026 DigiExpert. All rights reserved.
             </p>
             <div className="flex space-x-6 text-secondary-400 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <span>om0071987@gmail.com</span>
+              <span>+91 9891113214</span>
             </div>
           </div>
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const hasSeenPopup = sessionStorage.getItem('hasSeenPopup');
+      if (!hasSeenPopup) {
+        setShowPopup(true);
+        sessionStorage.setItem('hasSeenPopup', 'true');
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <Router basename="/">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsConditions />} />
+        <Route path="/refund" element={<RefundPolicy />} />
+        <Route path="/contact" element={<ContactUs />} />
+      </Routes>
+      <WhatsAppButton />
+      <PopupModal isOpen={showPopup} onClose={() => setShowPopup(false)} />
+    </Router>
   );
 }
 
