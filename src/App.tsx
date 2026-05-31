@@ -39,6 +39,11 @@ import PopupModal from './components/PopupModal';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
+}
+
 const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
@@ -81,7 +86,12 @@ function HomePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      alert('Form submission is not available. Please try WhatsApp or email.');
+      return;
+    }
 
     setFormSubmitting(true);
     try {
@@ -89,12 +99,17 @@ function HomePage() {
         .from('contacts')
         .insert([formData]);
 
-      if (!error) {
-        setFormSubmitted(true);
-        setFormData({ name: '', email: '', company: '', website_type: '', message: '' });
+      if (error) {
+        console.error('Supabase error:', error);
+        alert('Error submitting form. Please try again or contact us via WhatsApp.');
+        return;
       }
+
+      setFormSubmitted(true);
+      setFormData({ name: '', email: '', company: '', website_type: '', message: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
+      alert('Error submitting form. Please try again or contact us via WhatsApp.');
     }
     setFormSubmitting(false);
   };
@@ -175,7 +190,7 @@ function HomePage() {
   const pricingPlans = [
     {
       name: 'Starter',
-      price: 'Rs 9,999',
+      price: 'Rs 4,999',
       description: 'Perfect for small businesses and personal projects',
       features: [
         '5-page responsive website',
@@ -189,7 +204,7 @@ function HomePage() {
     },
     {
       name: 'Business',
-      price: 'Rs 24,999',
+      price: 'Rs 6,999',
       description: 'Ideal for growing businesses and startups',
       features: [
         '10-page responsive website',
@@ -204,7 +219,7 @@ function HomePage() {
     },
     {
       name: 'Enterprise',
-      price: 'Rs 49,999',
+      price: 'Rs 9,999',
       description: 'Complete solution for established businesses',
       features: [
         'Unlimited pages',
@@ -305,11 +320,17 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="relative w-10 h-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg transform rotate-3 opacity-80"></div>
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">D</span>
-                </div>
+              <div className="relative w-10 h-10 group">
+                <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="2" width="36" height="36" rx="8" className="fill-primary-600" />
+                  <path
+                    d="M12 12h8c5.5 0 10 4.5 10 10s-4.5 10-10 10h-8V12z"
+                    className="fill-white"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="20" cy="22" r="4" className="fill-primary-600" />
+                </svg>
               </div>
               <span className="text-xl font-bold text-secondary-900">DigiExpert</span>
             </Link>
@@ -385,9 +406,9 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center space-x-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center space-x-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6 animate-slide-in-up">
                 <Sparkles className="w-4 h-4" />
-                <span>Stand Out Online</span>
+                <span>Affordable web development services</span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-secondary-900 leading-tight mb-6">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
@@ -421,7 +442,7 @@ function HomePage() {
                 <div className="w-px h-12 bg-secondary-200"></div>
                 <div>
                   <p className="text-sm text-secondary-500">Starting price</p>
-                  <p className="text-lg font-bold text-secondary-900">Rs 9,999</p>
+                  <p className="text-lg font-bold text-secondary-900">Rs 4,999</p>
                 </div>
                 <div className="w-px h-12 bg-secondary-200"></div>
                 <div>
@@ -438,8 +459,8 @@ function HomePage() {
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
                 <img
-                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Indian business team collaborating"
+                  src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Growing your business with digital solutions"
                   className="w-full h-64 lg:h-80 object-cover"
                 />
               </div>
@@ -807,12 +828,46 @@ function HomePage() {
               )}
             </div>
 
-            <div>
-              <img
-                src="https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Indian digital marketing team workspace"
-                className="rounded-2xl shadow-2xl"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <img
+                  src="https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  alt="Demo Website 1 - Modern Business"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                  <div>
+                    <p className="text-white font-bold">Modern Business</p>
+                    <p className="text-white/80 text-sm">Professional Design</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-pulse-subtle">
+                <img
+                  src="https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  alt="Demo Website 2 - E-commerce"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                  <div>
+                    <p className="text-white font-bold">E-commerce Store</p>
+                    <p className="text-white/80 text-sm">Online Shopping</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <img
+                  src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  alt="Demo Website 3 - Portfolio"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                  <div>
+                    <p className="text-white font-bold">Creative Portfolio</p>
+                    <p className="text-white/80 text-sm">Showcase Work</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -825,10 +880,16 @@ function HomePage() {
             <div className="md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="relative w-10 h-10">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-accent-400 rounded-lg transform rotate-3 opacity-80"></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">D</span>
-                  </div>
+                  <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="36" height="36" rx="8" className="fill-primary-500" />
+                    <path
+                      d="M12 12h8c5.5 0 10 4.5 10 10s-4.5 10-10 10h-8V12z"
+                      className="fill-white"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="20" cy="22" r="4" className="fill-primary-500" />
+                  </svg>
                 </div>
                 <span className="text-xl font-bold">DigiExpert</span>
               </div>
