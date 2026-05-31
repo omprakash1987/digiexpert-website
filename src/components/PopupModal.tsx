@@ -34,18 +34,29 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase credentials');
+      alert('Please contact us via WhatsApp or email for now.');
+      return;
+    }
 
     setFormSubmitting(true);
     try {
       const { error } = await supabase.from('contacts').insert([formData]);
 
-      if (!error) {
-        setFormSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', service: '' });
+      if (error) {
+        console.error('Database error:', error);
+        alert('Error submitting form. Please try WhatsApp or email.');
+        setFormSubmitting(false);
+        return;
       }
+
+      setFormSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', service: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
+      alert('Error submitting form. Please try WhatsApp or email.');
     }
     setFormSubmitting(false);
   };
@@ -61,52 +72,52 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-[scaleIn_0.3s_ease-out]">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all animate-[scaleIn_0.3s_ease-out]">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-secondary-100 hover:bg-secondary-200 rounded-full flex items-center justify-center transition-colors"
+          className="absolute top-3 right-3 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
         >
-          <X className="w-5 h-5 text-secondary-600" />
+          <X className="w-4 h-4 text-white" />
         </button>
 
-        <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-8 pb-6">
-          <h2 className="text-2xl font-bold mb-2">Get Priority Support</h2>
-          <p className="text-primary-100">
-            Special offer for a limited time
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-5 py-4">
+          <h2 className="text-lg font-bold mb-1">Priority Support</h2>
+          <p className="text-xs text-primary-100">
+            Limited time offer
           </p>
         </div>
 
-        <div className="p-8">
+        <div className="p-5">
           {formSubmitted ? (
-            <div className="text-center py-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="text-center py-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 mb-2">Thank You!</h3>
-              <p className="text-secondary-600 mb-6">
-                We'll contact you within 24 hours with priority support.
+              <h3 className="text-lg font-bold text-secondary-900 mb-2">Thank You!</h3>
+              <p className="text-sm text-secondary-600 mb-4">
+                We'll contact you within 24 hours.
               </p>
-              <button onClick={onClose} className="text-primary-600 font-medium hover:text-primary-700">
+              <button onClick={onClose} className="text-primary-600 font-medium hover:text-primary-700 text-sm">
                 Close
               </button>
             </div>
           ) : (
             <>
-              <div className="bg-gradient-to-r from-accent-50 to-primary-50 rounded-xl p-5 mb-6 border border-accent-100">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-accent-600" />
+              <div className="bg-accent-50 rounded-lg p-3 mb-4 border border-accent-100">
+                <div className="flex items-start space-x-2">
+                  <div className="w-8 h-8 bg-accent-100 rounded flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-4 h-4 text-accent-600" />
                   </div>
                   <div>
-                    <p className="text-secondary-900 font-semibold mb-1">Limited Time Offer</p>
-                    <p className="text-secondary-600 text-sm leading-relaxed">
-                      Get Extra Priority Support & Bonus Consultation if you purchase any plan within 1 hour.
+                    <p className="text-secondary-900 font-semibold text-sm mb-1">1 Hour Special Offer</p>
+                    <p className="text-secondary-600 text-xs leading-relaxed">
+                      Get Extra Priority Support & Bonus Consultation if you purchase within 1 hour.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <input
                     type="text"
@@ -114,7 +125,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     placeholder="Your Name *"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
                   />
                 </div>
 
@@ -125,7 +136,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     placeholder="Email Address *"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
                   />
                 </div>
 
@@ -136,7 +147,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     placeholder="Phone Number *"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
                   />
                 </div>
 
@@ -145,9 +156,9 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     required
                     value={formData.service}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-secondary-600"
+                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm text-secondary-600"
                   >
-                    <option value="">Select Service Required *</option>
+                    <option value="">Select Service *</option>
                     <option value="Website Design">Website Design</option>
                     <option value="E-commerce Website">E-commerce Website</option>
                     <option value="SEO Services">SEO Services</option>
@@ -159,21 +170,21 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                 <button
                   type="submit"
                   disabled={formSubmitting}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-2.5 rounded font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                   <span>{formSubmitting ? 'Submitting...' : 'Get Priority Support'}</span>
                 </button>
               </form>
 
-              <div className="mt-5 pt-5 border-t border-secondary-100">
-                <p className="text-center text-secondary-500 text-sm mb-4">Or contact us instantly on WhatsApp</p>
+              <div className="mt-4 pt-4 border-t border-secondary-100">
+                <p className="text-center text-secondary-500 text-xs mb-3">Or contact us instantly</p>
                 <button
                   onClick={openWhatsApp}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Chat on WhatsApp</span>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp Quick Contact</span>
                 </button>
               </div>
             </>

@@ -20,7 +20,12 @@ export default function ContactUs() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase credentials');
+      alert('Please contact us via WhatsApp or email for now.');
+      return;
+    }
 
     setFormSubmitting(true);
     try {
@@ -28,12 +33,18 @@ export default function ContactUs() {
         .from('contacts')
         .insert([formData]);
 
-      if (!error) {
-        setFormSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+      if (error) {
+        console.error('Database error:', error);
+        alert('Error submitting form. Please try WhatsApp or email.');
+        setFormSubmitting(false);
+        return;
       }
+
+      setFormSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', service: '', message: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
+      alert('Error submitting form. Please try WhatsApp or email.');
     }
     setFormSubmitting(false);
   };
