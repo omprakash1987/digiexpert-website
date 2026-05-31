@@ -84,12 +84,25 @@ function HomePage() {
     }
   };
 
+  const [formError, setFormError] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
 
-    if (!supabase) {
+    // Validate
+    if (!formData.name.trim()) {
+      setFormError('Please enter your name');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setFormError('Please enter your email');
+      return;
+    }
+
+    if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase client not initialized');
-      alert('Form submission is not available. Please try WhatsApp or email.');
+      setFormError('Service unavailable. Please try WhatsApp or email.');
       return;
     }
 
@@ -101,7 +114,8 @@ function HomePage() {
 
       if (error) {
         console.error('Supabase error:', error);
-        alert('Error submitting form. Please try again or contact us via WhatsApp.');
+        setFormError('Failed to send message. Please try WhatsApp or email.');
+        setFormSubmitting(false);
         return;
       }
 
@@ -109,7 +123,7 @@ function HomePage() {
       setFormData({ name: '', email: '', company: '', website_type: '', message: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
-      alert('Error submitting form. Please try again or contact us via WhatsApp.');
+      setFormError('Failed to send message. Please try WhatsApp or email.');
     }
     setFormSubmitting(false);
   };
@@ -322,20 +336,30 @@ function HomePage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 lg:h-20">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-3">
               <div className="relative w-10 h-10 group">
                 <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="2" y="2" width="36" height="36" rx="8" className="fill-primary-600" />
-                  <path
-                    d="M12 12h8c5.5 0 10 4.5 10 10s-4.5 10-10 10h-8V12z"
-                    className="fill-white"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="20" cy="22" r="4" className="fill-primary-600" />
+                  <defs>
+                    <linearGradient id="headerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#2563eb" />
+                      <stop offset="100%" stopColor="#7c3aed" />
+                    </linearGradient>
+                    <linearGradient id="headerAccentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#06b6d4" />
+                      <stop offset="100%" stopColor="#2563eb" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#headerLogoGradient)"/>
+                  <path d="M10 10C10 8.89543 10.8954 8 12 8H20C24.4183 8 28 11.5817 28 16C28 20.4183 24.4183 24 20 24H12C10.8954 24 10 23.1046 10 22V10Z" fill="white"/>
+                  <circle cx="20" cy="16" r="5" fill="url(#headerAccentGradient)"/>
+                  <circle cx="20" cy="16" r="2.5" fill="white"/>
+                  <path d="M14 12L26 24" stroke="url(#headerAccentGradient)" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
                 </svg>
               </div>
-              <span className="text-xl font-bold text-secondary-900">DigiExpert</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-secondary-900 leading-tight">DigiExpert</span>
+                <span className="text-xs text-secondary-500 hidden sm:block">Web Design Solutions</span>
+              </div>
             </Link>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -806,6 +830,11 @@ function HomePage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {formError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                      {formError}
+                    </div>
+                  )}
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
                       <input
@@ -924,20 +953,30 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div className="md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center space-x-3 mb-4">
                 <div className="relative w-10 h-10">
                   <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="36" height="36" rx="8" className="fill-primary-500" />
-                    <path
-                      d="M12 12h8c5.5 0 10 4.5 10 10s-4.5 10-10 10h-8V12z"
-                      className="fill-white"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="20" cy="22" r="4" className="fill-primary-500" />
+                    <defs>
+                      <linearGradient id="footerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#2563eb" />
+                        <stop offset="100%" stopColor="#7c3aed" />
+                      </linearGradient>
+                      <linearGradient id="footerAccentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#06b6d4" />
+                        <stop offset="100%" stopColor="#2563eb" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#footerLogoGradient)"/>
+                    <path d="M10 10C10 8.89543 10.8954 8 12 8H20C24.4183 8 28 11.5817 28 16C28 20.4183 24.4183 24 20 24H12C10.8954 24 10 23.1046 10 22V10Z" fill="white"/>
+                    <circle cx="20" cy="16" r="5" fill="url(#footerAccentGradient)"/>
+                    <circle cx="20" cy="16" r="2.5" fill="white"/>
+                    <path d="M14 12L26 24" stroke="url(#footerAccentGradient)" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
                   </svg>
                 </div>
-                <span className="text-xl font-bold">DigiExpert</span>
+                <div className="flex flex-col">
+                  <span className="text-xl font-bold leading-tight">DigiExpert</span>
+                  <span className="text-xs text-secondary-400">Web Design Solutions</span>
+                </div>
               </div>
               <p className="text-secondary-400 leading-relaxed max-w-md">
                 We create modern, conversion-focused websites for businesses and startups.

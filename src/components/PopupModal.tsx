@@ -14,12 +14,12 @@ interface PopupModalProps {
 export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     service: '',
   });
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(3600); // 1 hour in seconds
 
   useEffect(() => {
     if (isOpen) {
@@ -32,31 +32,55 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
     };
   }, [isOpen]);
 
+  // Countdown timer
+  useEffect(() => {
+    if (!isOpen || formSubmitted) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isOpen, formSubmitted]);
+
+  const formatTime = (seconds: number) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Missing Supabase credentials');
-      alert('Please contact us via WhatsApp or email for now.');
+      alert('Please contact us via WhatsApp for now.');
       return;
     }
 
     setFormSubmitting(true);
     try {
-      const { error } = await supabase.from('contacts').insert([formData]);
+      const { error } = await supabase.from('contacts').insert([{
+        name: formData.name,
+        phone: formData.phone,
+        service: formData.service,
+        email: '',
+        message: 'Popup form submission - Priority Support Request'
+      }]);
 
       if (error) {
         console.error('Database error:', error);
-        alert('Error submitting form. Please try WhatsApp or email.');
+        alert('Error submitting form. Please try WhatsApp.');
         setFormSubmitting(false);
         return;
       }
 
       setFormSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', service: '' });
+      setFormData({ name: '', phone: '', service: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
-      alert('Error submitting form. Please try WhatsApp or email.');
+      alert('Error submitting form. Please try WhatsApp.');
     }
     setFormSubmitting(false);
   };
@@ -70,54 +94,56 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all animate-[scaleIn_0.3s_ease-out]">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-xs w-full overflow-hidden transform transition-all animate-[scaleIn_0.3s_ease-out]">
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
+          className="absolute top-2 right-2 z-10 w-7 h-7 bg-gray-100 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center transition-all duration-200 shadow-sm"
         >
-          <X className="w-4 h-4 text-white" />
+          <X className="w-4 h-4" />
         </button>
 
-        <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-5 py-4">
-          <h2 className="text-lg font-bold mb-1">Priority Support</h2>
-          <p className="text-xs text-primary-100">
-            Limited time offer
-          </p>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-3">
+          <h2 className="text-base font-bold">Special Offer</h2>
+          <p className="text-xs text-primary-100">Limited time only</p>
         </div>
 
-        <div className="p-5">
+        <div className="p-4">
           {formSubmitted ? (
-            <div className="text-center py-4">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="text-center py-3">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
               </div>
-              <h3 className="text-lg font-bold text-secondary-900 mb-2">Thank You!</h3>
-              <p className="text-sm text-secondary-600 mb-4">
-                We'll contact you within 24 hours.
+              <h3 className="text-base font-bold text-secondary-900 mb-1">Success!</h3>
+              <p className="text-xs text-secondary-600 mb-3">
+                We'll contact you shortly.
               </p>
-              <button onClick={onClose} className="text-primary-600 font-medium hover:text-primary-700 text-sm">
+              <button onClick={onClose} className="text-primary-600 font-medium hover:text-primary-700 text-xs">
                 Close
               </button>
             </div>
           ) : (
             <>
-              <div className="bg-accent-50 rounded-lg p-3 mb-4 border border-accent-100">
-                <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-accent-100 rounded flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-4 h-4 text-accent-600" />
-                  </div>
-                  <div>
-                    <p className="text-secondary-900 font-semibold text-sm mb-1">1 Hour Special Offer</p>
-                    <p className="text-secondary-600 text-xs leading-relaxed">
-                      Get Extra Priority Support & Bonus Consultation if you purchase within 1 hour.
-                    </p>
-                  </div>
+              {/* Countdown Timer */}
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg p-2.5 mb-3 border border-red-100 text-center">
+                <div className="flex items-center justify-center space-x-1.5 mb-1">
+                  <Clock className="w-3.5 h-3.5 text-red-500" />
+                  <span className="text-red-600 font-bold text-lg font-mono">{formatTime(timeLeft)}</span>
                 </div>
+                <p className="text-xs text-secondary-600">Hurry! Offer expires soon</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Offer Text */}
+              <div className="bg-primary-50 rounded-lg p-2.5 mb-3 border border-primary-100">
+                <p className="text-xs text-secondary-700 leading-relaxed text-center font-medium">
+                  Get Extra Priority Support + Bonus Consultation if you purchase any plan within 1 hour.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-2.5">
                 <div>
                   <input
                     type="text"
@@ -125,18 +151,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     placeholder="Your Name *"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
-                  />
-                </div>
-
-                <div>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email Address *"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all"
                   />
                 </div>
 
@@ -147,7 +162,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     placeholder="Phone Number *"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all"
                   />
                 </div>
 
@@ -156,9 +171,9 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                     required
                     value={formData.service}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full px-3 py-2 rounded border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-sm text-secondary-600"
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-secondary-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-all text-secondary-600"
                   >
-                    <option value="">Select Service *</option>
+                    <option value="">Service Required *</option>
                     <option value="Website Design">Website Design</option>
                     <option value="E-commerce Website">E-commerce Website</option>
                     <option value="SEO Services">SEO Services</option>
@@ -170,21 +185,21 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
                 <button
                   type="submit"
                   disabled={formSubmitting}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-2.5 rounded font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{formSubmitting ? 'Submitting...' : 'Get Priority Support'}</span>
+                  <span>{formSubmitting ? 'Submitting...' : 'Claim Offer'}</span>
                 </button>
               </form>
 
-              <div className="mt-4 pt-4 border-t border-secondary-100">
-                <p className="text-center text-secondary-500 text-xs mb-3">Or contact us instantly</p>
+              <div className="mt-3 pt-3 border-t border-secondary-100">
+                <p className="text-center text-secondary-400 text-xs mb-2">Quick contact</p>
                 <button
                   onClick={openWhatsApp}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 text-sm"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Quick Contact</span>
+                  <span>WhatsApp</span>
                 </button>
               </div>
             </>

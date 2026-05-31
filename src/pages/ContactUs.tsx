@@ -17,13 +17,33 @@ export default function ContactUs() {
   });
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
+    // Validate
+    if (!formData.name.trim()) {
+      setFormError('Please enter your name');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setFormError('Please enter your email');
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setFormError('Please enter your phone number');
+      return;
+    }
+    if (!formData.service.trim()) {
+      setFormError('Please select a service');
+      return;
+    }
 
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Missing Supabase credentials');
-      alert('Please contact us via WhatsApp or email for now.');
+      setFormError('Service unavailable. Please contact us via WhatsApp.');
       return;
     }
 
@@ -35,7 +55,7 @@ export default function ContactUs() {
 
       if (error) {
         console.error('Database error:', error);
-        alert('Error submitting form. Please try WhatsApp or email.');
+        setFormError('Failed to send message. Please try WhatsApp.');
         setFormSubmitting(false);
         return;
       }
@@ -44,7 +64,7 @@ export default function ContactUs() {
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
     } catch (err) {
       console.error('Error submitting form:', err);
-      alert('Error submitting form. Please try WhatsApp or email.');
+      setFormError('Failed to send message. Please try WhatsApp.');
     }
     setFormSubmitting(false);
   };
@@ -89,6 +109,12 @@ export default function ContactUs() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {formError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {formError}
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-secondary-700 mb-2">Full Name *</label>
                   <input
