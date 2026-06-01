@@ -58,6 +58,7 @@ function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [popupOpen, setPopupOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -74,6 +75,15 @@ function HomePage() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto-show popup after 5 seconds on every page load
+  useEffect(() => {
+    const popupTimer = setTimeout(() => {
+      setPopupOpen(true);
+    }, 5000);
+
+    return () => clearTimeout(popupTimer);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -328,6 +338,9 @@ function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {/* Popup Modal */}
+      <PopupModal isOpen={popupOpen} onClose={() => setPopupOpen(false)} />
+
       {/* Header */}
       <header
         className={`fixed w-full z-50 transition-all duration-300 ${
@@ -1024,12 +1037,8 @@ function App() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const hasSeenPopup = sessionStorage.getItem('hasSeenPopup');
-      if (!hasSeenPopup) {
-        setShowPopup(true);
-        sessionStorage.setItem('hasSeenPopup', 'true');
-      }
-    }, 3000);
+      setShowPopup(true);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
