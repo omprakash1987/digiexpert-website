@@ -500,51 +500,7 @@ function HomePage() {
                 </div>
                 <div className="w-full h-64 lg:h-80 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-grid-white/10"></div>
-                  <div className="relative z-10 w-full max-w-md mx-auto px-8">
-                    <div className="flex items-center justify-between mb-8">
-                      <div>
-                        <p className="text-white/80 text-sm">Monthly Revenue</p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp className="w-5 h-5 text-green-300" />
-                        <span className="text-green-300 font-bold">+127%</span>
-                      </div>
-                    </div>
-                    <svg viewBox="0 0 400 200" className="w-full h-32">
-                      <defs>
-                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5"/>
-                          <stop offset="100%" stopColor="#ffffff" stopOpacity="1"/>
-                        </linearGradient>
-                      </defs>
-                      <path
-                        d="M 20 180 Q 50 160, 80 140 T 140 110 T 200 80 T 260 50 T 320 30 T 380 20"
-                        fill="none"
-                        stroke="url(#lineGradient)"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        className="animate-[drawLine_2s_ease-in-out_infinite]"
-                      />
-                      <circle cx="20" cy="180" r="5" className="fill-white animate-pulse"/>
-                      <circle cx="80" cy="140" r="5" className="fill-white animate-pulse" style={{animationDelay: '0.2s'}}/>
-                      <circle cx="140" cy="110" r="5" className="fill-white animate-pulse" style={{animationDelay: '0.4s'}}/>
-                      <circle cx="200" cy="80" r="5" className="fill-white animate-pulse" style={{animationDelay: '0.6s'}}/>
-                      <circle cx="260" cy="50" r="5" className="fill-white animate-pulse" style={{animationDelay: '0.8s'}}/>
-                      <circle cx="320" cy="30" r="5" className="fill-white animate-pulse" style={{animationDelay: '1s'}}/>
-                      <circle cx="380" cy="20" r="6" className="fill-green-300 animate-pulse" style={{animationDelay: '1.2s'}}/>
-                    </svg>
-                    <div className="flex items-center justify-between mt-8 text-white">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold">Rs 2.5L</p>
-                        <p className="text-sm text-white/80">Before</p>
-                      </div>
-                      <ArrowRight className="w-6 h-6 text-white/60" />
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-green-300">Rs 5.8L</p>
-                        <p className="text-sm text-white/80">After DigiExpert</p>
-                      </div>
-                    </div>
-                  </div>
+                  
                 </div>
               </div>
             </div>
