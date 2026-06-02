@@ -500,6 +500,15 @@ function HomePage() {
                 </div>
                 <div className="w-full h-64 lg:h-80 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-grid-white/10"></div>
+                  <img
+  src="/digi1.png"
+  alt="DigiExpert"
+  className="w-full h-full object-cover"
+/>
+
+
+
+                  
                   
                 </div>
               </div>
