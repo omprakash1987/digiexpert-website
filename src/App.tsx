@@ -890,7 +890,7 @@ function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">Modern Business</p>
+                    <p className="text-white font-bold">Food & Restaurants</p>
                     <p className="text-white/80 text-sm">Professional Design</p>
                   </div>
                 </div>
@@ -903,7 +903,7 @@ function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">E-commerce Store</p>
+                    <p className="text-white font-bold">Healthcare Sites</p>
                     <p className="text-white/80 text-sm">Online Shopping</p>
                   </div>
                 </div>
@@ -916,7 +916,7 @@ function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">Creative Portfolio</p>
+                    <p className="text-white font-bold">E-commerce Store</p>
                     <p className="text-white/80 text-sm">Showcase Work</p>
                   </div>
                 </div>
