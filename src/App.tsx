@@ -897,7 +897,7 @@ function HomePage() {
               </div>
               <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-pulse-subtle">
                 <img
-                  src="https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  src="img2.jfif?auto=compress&cs=tinysrgb&w=400"
                   alt="Demo Website 2 - E-commerce"
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -910,7 +910,7 @@ function HomePage() {
               </div>
               <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                 <img
-                  src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=400"
+                  src="img3.jfif?auto=compress&cs=tinysrgb&w=400"
                   alt="Demo Website 3 - Portfolio"
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
