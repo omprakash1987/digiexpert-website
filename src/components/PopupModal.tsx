@@ -144,7 +144,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
               <p className="text-sm text-primary-100 mt-1">Limited Time Only</p>
             </div>
 
-            <div className="p-6">
+            <div className="px-6 py-10">
               {/* Countdown Timer */}
               <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 mb-4 border-2 border-red-200">
                 <div className="flex items-center justify-between mb-2">
