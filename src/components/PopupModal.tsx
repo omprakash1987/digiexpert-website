@@ -104,12 +104,12 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4">
       {/* Blurred background */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleMaybeLater} />
 
       {/* Popup Card */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all animate-[scaleIn_0.3s_ease-out]">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto transform transition-all animate-[scaleIn_0.3s_ease-out]">
         {/* Close Button */}
         <button
           onClick={handleMaybeLater}
@@ -144,7 +144,7 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
               <p className="text-sm text-primary-100 mt-1">Limited Time Only</p>
             </div>
 
-            <div className="px-6 py-10">
+            <div className="px-4 py-8 sm:px-6">
               {/* Countdown Timer */}
               <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 mb-4 border-2 border-red-200">
                 <div className="flex items-center justify-between mb-2">
