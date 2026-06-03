@@ -55,7 +55,7 @@ export default function RefundPolicy() {
                 To request a refund:
               </p>
               <ol className="list-decimal pl-6 text-secondary-600 space-y-2">
-                <li>Send a written request to om0071987@gmail.com</li>
+                <li>Send a written request to support.digiexpert@gmail.com</li>
                 <li>Include your project details and reason for refund request</li>
                 <li>Refund requests will be reviewed within 3-5 business days</li>
                 <li>Approved refunds will be processed within 7-10 business days</li>
@@ -112,7 +112,7 @@ export default function RefundPolicy() {
               </p>
               <div className="bg-secondary-50 rounded-lg p-6">
                 <p className="text-secondary-900 font-semibold mb-2">DigiExpert</p>
-                <p className="text-secondary-600">Email: om0071987@gmail.com</p>
+                <p className="text-secondary-600">Email: support.digiexpert@gmail.com</p>
                 <p className="text-secondary-600">Phone: +91 9891113214</p>
                 <p className="text-secondary-600">Website: https://www.digiexpert.online</p>
               </div>

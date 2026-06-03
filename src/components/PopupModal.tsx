@@ -133,7 +133,10 @@ export default function PopupModal({ isOpen, onClose }: PopupModalProps) {
             <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-hidden">
               {/* Close Button */}
               <button
-                onClick={handleMaybeLater}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMaybeLater();
+                }}
                 className="absolute top-3 right-3 z-20 w-8 h-8 bg-gray-100 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center transition-all duration-200 shadow-md"
                 aria-label="Close popup"
               >

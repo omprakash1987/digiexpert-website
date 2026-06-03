@@ -217,8 +217,8 @@ export default function ContactUs() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-secondary-900 mb-1">Email</h3>
-                    <a href="mailto:om0071987@gmail.com" className="text-secondary-600 hover:text-primary-600 transition-colors">
-                      om0071987@gmail.com
+                    <a href="mailto:support.digiexpert@gmail.com" className="text-secondary-600 hover:text-primary-600 transition-colors">
+                      support.digiexpert@gmail.com
                     </a>
                   </div>
                 </div>

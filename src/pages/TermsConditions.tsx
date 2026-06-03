@@ -129,7 +129,7 @@ export default function TermsConditions() {
               </p>
               <div className="bg-secondary-50 rounded-lg p-6">
                 <p className="text-secondary-900 font-semibold mb-2">DigiExpert</p>
-                <p className="text-secondary-600">Email: om0071987@gmail.com</p>
+                <p className="text-secondary-600">Email: support.digiexpert@gmail.com</p>
                 <p className="text-secondary-600">Phone: +91 9891113214</p>
                 <p className="text-secondary-600">Website: https://www.digiexpert.online</p>
               </div>

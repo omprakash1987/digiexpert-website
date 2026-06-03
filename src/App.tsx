@@ -36,6 +36,8 @@ import RefundPolicy from './pages/RefundPolicy';
 import ContactUs from './pages/ContactUs';
 import WhatsAppButton from './components/WhatsAppButton';
 import PopupModal from './components/PopupModal';
+import { useCounterAnimation } from './hooks/useCounterAnimation';
+import { StatItem } from './components/StatItem';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -169,13 +171,6 @@ function HomePage() {
       title: 'Secure & Reliable',
       description: 'Enterprise-grade security to protect your website and customer data.',
     },
-  ];
-
-  const stats = [
-    { icon: Users, value: '200+', label: 'Happy Clients' },
-    { icon: Globe, value: '350+', label: 'Projects Delivered' },
-    { icon: Star, value: '4.9', label: 'Average Rating' },
-    { icon: Clock, value: '7-10', label: 'Days Delivery' },
   ];
 
   const features = [
@@ -521,13 +516,10 @@ function HomePage() {
       <section className="py-12 bg-primary-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <stat.icon className="w-8 h-8 text-primary-200 mx-auto mb-2" />
-                <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
-                <p className="text-primary-200">{stat.label}</p>
-              </div>
-            ))}
+            <StatItem icon={Users} value="200" label="Happy Clients" />
+            <StatItem icon={Globe} value="350" label="Projects Delivered" />
+            <StatItem icon={Star} value="4.9" label="Average Rating" />
+            <StatItem icon={Clock} value="7-10" label="Days Delivery" />
           </div>
         </div>
       </section>
@@ -1022,7 +1014,7 @@ function HomePage() {
               © 2026 DigiExpert. All rights reserved.
             </p>
             <div className="flex space-x-6 text-secondary-400 text-sm">
-              <span>om0071987@gmail.com</span>
+              <span>support.digiexpert@gmail.com</span>
               <span>+91 9891113214</span>
             </div>
           </div>
