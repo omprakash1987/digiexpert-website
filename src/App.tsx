@@ -518,7 +518,7 @@ function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <StatItem icon={Users} value="200" label="Happy Clients" />
             <StatItem icon={Globe} value="350" label="Projects Delivered" />
-            <StatItem icon={Star} value="4.9" label="Average Rating" />
+            <StatItem icon={Star} value="4.8" label="Average Rating" />
             <StatItem icon={Clock} value="7-10" label="Days Delivery" />
           </div>
         </div>

@@ -12,7 +12,7 @@ export function StatItem({ icon: Icon, value, label }: StatItemProps) {
   const { count, ref } = useCounterAnimation(numValue, 2000);
 
   const displayValue = () => {
-    if (value === '4.9') {
+    if (value === '4.8') {
       return (count / 100).toFixed(1);
     }
     if (typeof value === 'string' && value.includes('-')) {
