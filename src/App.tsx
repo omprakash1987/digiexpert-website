@@ -882,42 +882,77 @@ function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Website 1 - Tech Startup */}
               <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                <img
-                  src="img1.jfif?auto=compress&cs=tinysrgb&w=400"
-                  alt="Demo Website 1 - Modern Business"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="grid grid-cols-4 gap-2 p-4">
+                      {[...Array(16)].map((_, i) => (
+                        <div key={i} className="bg-white/20 rounded-lg h-8"></div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative z-10 text-center">
+                    <Rocket className="w-12 h-12 text-white mx-auto mb-2" />
+                    <p className="text-white font-bold text-lg">TechFlow</p>
+                  </div>
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">Food & Restaurants</p>
-                    <p className="text-white/80 text-sm">Professional Design</p>
+                    <p className="text-white font-bold">Tech Startup</p>
+                    <p className="text-white/80 text-sm">Modern Landing Page</p>
                   </div>
                 </div>
               </div>
-              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-pulse-subtle">
-                <img
-                  src="img2.jfif?auto=compress&cs=tinysrgb&w=400"
-                  alt="Demo Website 2 - E-commerce"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                  <div>
-                    <p className="text-white font-bold">Healthcare Sites</p>
-                    <p className="text-white/80 text-sm">Online Shopping</p>
+
+              {/* Website 2 - E-commerce */}
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="space-y-3 p-4">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="flex gap-2">
+                          <div className="w-16 h-16 bg-white/20 rounded-lg"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                            <div className="h-3 bg-white/20 rounded w-1/2"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative z-10 text-center">
+                    <ShoppingCart className="w-12 h-12 text-white mx-auto mb-2" />
+                    <p className="text-white font-bold text-lg">ShopHub</p>
                   </div>
                 </div>
-              </div>
-              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                <img
-                  src="img3.jfif?auto=compress&cs=tinysrgb&w=400"
-                  alt="Demo Website 3 - Portfolio"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                   <div>
                     <p className="text-white font-bold">E-commerce Store</p>
-                    <p className="text-white/80 text-sm">Showcase Work</p>
+                    <p className="text-white/80 text-sm">Full Shopping Platform</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Website 3 - Portfolio */}
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div className="bg-gradient-to-br from-orange-500 to-red-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="grid grid-cols-2 gap-3 p-4 h-full">
+                      {[...Array(6)].map((_, i) => (
+                        <div key={i} className="bg-white/20 rounded-lg"></div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative z-10 text-center">
+                    <Palette className="w-12 h-12 text-white mx-auto mb-2" />
+                    <p className="text-white font-bold text-lg">DesignStudio</p>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                  <div>
+                    <p className="text-white font-bold">Portfolio Showcase</p>
+                    <p className="text-white/80 text-sm">Creative Agency</p>
                   </div>
                 </div>
               </div>
