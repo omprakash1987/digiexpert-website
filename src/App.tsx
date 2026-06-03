@@ -874,77 +874,97 @@ function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Website 1 - Tech Startup */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="grid grid-cols-4 gap-2 p-4">
-                      {[...Array(16)].map((_, i) => (
-                        <div key={i} className="bg-white/20 rounded-lg h-8"></div>
-                      ))}
+              {/* Website 1 - Tech Startup Landing Page */}
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
+                <div className="h-48 flex flex-col">
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-white/40"></div>
+                      <div className="w-2 h-2 rounded-full bg-white/60"></div>
+                      <div className="w-2 h-2 rounded-full bg-white"></div>
+                    </div>
+                    <p className="text-white text-xs font-semibold">TechFlow.io</p>
+                  </div>
+                  {/* Hero Section */}
+                  <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col items-center justify-center p-4">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg mb-2 flex items-center justify-center">
+                      <Rocket className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-blue-900 font-bold text-sm">Build Your Next Big Idea</p>
+                    <p className="text-blue-600 text-xs mt-1">Modern SaaS Solution</p>
+                    <div className="mt-3 flex gap-1">
+                      <div className="h-1 w-6 bg-blue-600 rounded-full"></div>
+                      <div className="h-1 w-3 bg-blue-200 rounded-full"></div>
                     </div>
                   </div>
-                  <div className="relative z-10 text-center">
-                    <Rocket className="w-12 h-12 text-white mx-auto mb-2" />
-                    <p className="text-white font-bold text-lg">TechFlow</p>
-                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">Tech Startup</p>
-                    <p className="text-white/80 text-sm">Modern Landing Page</p>
+                    <p className="text-white font-bold text-sm">Tech Startup</p>
+                    <p className="text-white/90 text-xs">Responsive Landing Page</p>
                   </div>
                 </div>
               </div>
 
-              {/* Website 2 - E-commerce */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="space-y-3 p-4">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="flex gap-2">
-                          <div className="w-16 h-16 bg-white/20 rounded-lg"></div>
-                          <div className="flex-1 space-y-2">
-                            <div className="h-3 bg-white/20 rounded w-3/4"></div>
-                            <div className="h-3 bg-white/20 rounded w-1/2"></div>
-                          </div>
+              {/* Website 2 - E-commerce Store Landing Page */}
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
+                <div className="h-48 flex flex-col">
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-2 flex items-center justify-between">
+                    <div className="w-6 h-6 bg-white/80 rounded flex items-center justify-center text-xs font-bold text-emerald-700">S</div>
+                    <div className="flex gap-2">
+                      <div className="w-1 h-1 rounded-full bg-white/60"></div>
+                      <div className="w-1 h-1 rounded-full bg-white/60"></div>
+                      <div className="w-1 h-1 rounded-full bg-white/60"></div>
+                    </div>
+                  </div>
+                  {/* Product Grid Preview */}
+                  <div className="flex-1 bg-gradient-to-br from-emerald-50 to-emerald-100 p-3 flex flex-col">
+                    <div className="flex gap-2 flex-1">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="flex-1 bg-white rounded-lg shadow-sm flex items-center justify-center">
+                          <ShoppingCart className="w-5 h-5 text-emerald-600" />
                         </div>
                       ))}
                     </div>
-                  </div>
-                  <div className="relative z-10 text-center">
-                    <ShoppingCart className="w-12 h-12 text-white mx-auto mb-2" />
-                    <p className="text-white font-bold text-lg">ShopHub</p>
+                    <div className="mt-2 h-1 bg-white/40 rounded-full"></div>
+                    <div className="mt-1 flex gap-1">
+                      <div className="h-px flex-1 bg-emerald-300"></div>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">E-commerce Store</p>
-                    <p className="text-white/80 text-sm">Full Shopping Platform</p>
+                    <p className="text-white font-bold text-sm">E-commerce Store</p>
+                    <p className="text-white/90 text-xs">Responsive Product Showcase</p>
                   </div>
                 </div>
               </div>
 
-              {/* Website 3 - Portfolio */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                <div className="bg-gradient-to-br from-orange-500 to-red-700 w-full h-48 flex flex-col items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="grid grid-cols-2 gap-3 p-4 h-full">
-                      {[...Array(6)].map((_, i) => (
-                        <div key={i} className="bg-white/20 rounded-lg"></div>
-                      ))}
+              {/* Website 3 - Portfolio Landing Page */}
+              <div className="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
+                <div className="h-48 flex flex-col">
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-orange-600 to-red-600 px-4 py-3 flex items-center justify-between">
+                    <p className="text-white text-xs font-bold">PORTFOLIO</p>
+                    <div className="w-5 h-5 border border-white/60 rounded flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white/60 rounded-full"></div>
                     </div>
                   </div>
-                  <div className="relative z-10 text-center">
-                    <Palette className="w-12 h-12 text-white mx-auto mb-2" />
-                    <p className="text-white font-bold text-lg">DesignStudio</p>
+                  {/* Portfolio Grid */}
+                  <div className="flex-1 bg-gradient-to-br from-orange-50 to-red-50 p-3 grid grid-cols-2 gap-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="bg-gradient-to-br from-orange-200 to-red-200 rounded-lg flex items-center justify-center">
+                        <Palette className="w-4 h-4 text-orange-700" />
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                   <div>
-                    <p className="text-white font-bold">Portfolio Showcase</p>
-                    <p className="text-white/80 text-sm">Creative Agency</p>
+                    <p className="text-white font-bold text-sm">Creative Portfolio</p>
+                    <p className="text-white/90 text-xs">Responsive Gallery Showcase</p>
                   </div>
                 </div>
               </div>
