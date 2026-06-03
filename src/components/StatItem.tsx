@@ -8,17 +8,18 @@ interface StatItemProps {
 }
 
 export function StatItem({ icon: Icon, value, label }: StatItemProps) {
-  const numValue = typeof value === 'string' ? parseInt(value) : value;
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  const isDecimal = typeof value === 'number' ? !Number.isInteger(value) : /^\d+\.\d+$/.test(value as string);
   const { count, ref } = useCounterAnimation(numValue, 2000);
 
   const displayValue = () => {
-    if (value === '4.9') {
-      return (count / 100).toFixed(1);
-    }
     if (typeof value === 'string' && value.includes('-')) {
       return value;
     }
-    return count;
+    if (isDecimal) {
+      return count.toFixed(1);
+    }
+    return Math.floor(count);
   };
 
   return (

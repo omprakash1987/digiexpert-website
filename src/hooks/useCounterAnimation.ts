@@ -38,7 +38,7 @@ export function useCounterAnimation(endValue: number, duration: number = 2000) {
       const progress = Math.min(elapsed / duration, 1);
 
       if (typeof endValue === 'number') {
-        setCount(Math.floor(progress * endValue));
+        setCount(parseFloat((progress * endValue).toFixed(1)));
       }
 
       if (progress < 1) {
